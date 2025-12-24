@@ -1,4 +1,5 @@
 
+import 'dart:convert';
 import 'package:equatable/equatable.dart';
 
 class MCQ extends Equatable {
@@ -22,33 +23,40 @@ class MCQ extends Equatable {
     required this.createdAt,
   });
 
-  // Add fromJson factory constructor
   factory MCQ.fromJson(Map<String, dynamic> json) {
+    List<String> optionsList = [];
+    if (json['options'] != null) {
+      if (json['options'] is String) {
+        optionsList = List<String>.from(jsonDecode(json['options']));
+      } else if (json['options'] is List) {
+        optionsList = List<String>.from(json['options']);
+      }
+    }
+
     return MCQ(
       id: json['id']?.toString() ?? '',
       question: json['question']?.toString() ?? '',
-      options: List<String>.from(json['options'] ?? []),
-      correctAnswerIndex: json['correct_answer_index'] as int? ?? 0,
+      options: optionsList,
+      correctAnswerIndex: json['correctanswerindex'] as int? ?? 0,
       explanation: json['explanation']?.toString(),
       category: json['category']?.toString() ?? '',
-      difficultyLevel: json['difficulty_level'] as int? ?? 1,
-      createdAt: json['created_at'] != null
-          ? DateTime.parse(json['created_at'].toString())
+      difficultyLevel: json['difficultylevel'] as int? ?? 1,
+      createdAt: json['createdat'] != null
+          ? DateTime.parse(json['createdat'].toString())
           : DateTime.now(),
     );
   }
 
-  // Add toJson method
   Map<String, dynamic> toJson() {
     return {
       'id': id,
       'question': question,
-      'options': options,
-      'correct_answer_index': correctAnswerIndex,
+      'options': jsonEncode(options),
+      'correctanswerindex': correctAnswerIndex,
       'explanation': explanation,
       'category': category,
-      'difficulty_level': difficultyLevel,
-      'created_at': createdAt.toIso8601String(),
+      'difficultylevel': difficultyLevel,
+      'createdat': createdAt.toIso8601String(),
     };
   }
 
@@ -82,41 +90,33 @@ class UserAnswer extends Equatable {
     this.timeSpentSeconds = 0,
   });
 
-  // Add fromJson factory constructor
   factory UserAnswer.fromJson(Map<String, dynamic> json) {
     return UserAnswer(
       id: json['id']?.toString() ?? '',
-      mcqId: json['mcq_id']?.toString() ?? '',
-      selectedAnswerIndex: json['selected_answer_index'] as int? ?? 0,
-      isCorrect: json['is_correct'] as bool? ?? false,
-      answeredAt: json['answered_at'] != null
-          ? DateTime.parse(json['answered_at'].toString())
+      mcqId: json['mcqid']?.toString() ?? '',
+      selectedAnswerIndex: json['selectedanswerindex'] as int? ?? 0,
+      isCorrect: (json['iscorrect'] ?? 0) == 1,
+      answeredAt: json['answeredat'] != null
+          ? DateTime.parse(json['answeredat'].toString())
           : DateTime.now(),
-      timeSpentSeconds: json['time_spent_seconds'] as int? ?? 0,
+      timeSpentSeconds: json['timespentseconds'] as int? ?? 0,
     );
   }
 
-  // Add toJson method
   Map<String, dynamic> toJson() {
     return {
       'id': id,
-      'mcq_id': mcqId,
-      'selected_answer_index': selectedAnswerIndex,
-      'is_correct': isCorrect,
-      'answered_at': answeredAt.toIso8601String(),
-      'time_spent_seconds': timeSpentSeconds,
+      'mcqid': mcqId,
+      'selectedanswerindex': selectedAnswerIndex,
+      'iscorrect': isCorrect ? 1 : 0,
+      'answeredat': answeredAt.toIso8601String(),
+      'timespentseconds': timeSpentSeconds,
     };
   }
 
   @override
-  List<Object?> get props => [
-    id,
-    mcqId,
-    selectedAnswerIndex,
-    isCorrect,
-    answeredAt,
-    timeSpentSeconds,
-  ];
+  List<Object?> get props =>
+      [id, mcqId, selectedAnswerIndex, isCorrect, answeredAt, timeSpentSeconds];
 }
 
 class QuestionProgress extends Equatable {
@@ -141,33 +141,31 @@ class QuestionProgress extends Equatable {
   double get accuracy =>
       timesAttempted > 0 ? (timesCorrect / timesAttempted) * 100 : 0;
 
-  // Add fromJson factory constructor
   factory QuestionProgress.fromJson(Map<String, dynamic> json) {
     return QuestionProgress(
-      mcqId: json['mcq_id']?.toString() ?? '',
-      timesAttempted: json['times_attempted'] as int? ?? 0,
-      timesCorrect: json['times_correct'] as int? ?? 0,
-      timesIncorrect: json['times_incorrect'] as int? ?? 0,
-      lastAttempted: json['last_attempted'] != null
-          ? DateTime.parse(json['last_attempted'].toString())
+      mcqId: json['mcqid']?.toString() ?? '',
+      timesAttempted: json['timesattempted'] as int? ?? 0,
+      timesCorrect: json['timescorrect'] as int? ?? 0,
+      timesIncorrect: json['timesincorrect'] as int? ?? 0,
+      lastAttempted: json['lastattempted'] != null
+          ? DateTime.parse(json['lastattempted'].toString())
           : DateTime.now(),
-      nextReviewDate: json['next_review_date'] != null
-          ? DateTime.parse(json['next_review_date'].toString())
+      nextReviewDate: json['nextreviewdate'] != null
+          ? DateTime.parse(json['nextreviewdate'].toString())
           : null,
-      repetitionLevel: json['repetition_level'] as int? ?? 0,
+      repetitionLevel: json['repetitionlevel'] as int? ?? 0,
     );
   }
 
-  // Add toJson method
   Map<String, dynamic> toJson() {
     return {
-      'mcq_id': mcqId,
-      'times_attempted': timesAttempted,
-      'times_correct': timesCorrect,
-      'times_incorrect': timesIncorrect,
-      'last_attempted': lastAttempted.toIso8601String(),
-      'next_review_date': nextReviewDate?.toIso8601String(),
-      'repetition_level': repetitionLevel,
+      'mcqid': mcqId,
+      'timesattempted': timesAttempted,
+      'timescorrect': timesCorrect,
+      'timesincorrect': timesIncorrect,
+      'lastattempted': lastAttempted.toIso8601String(),
+      'nextreviewdate': nextReviewDate?.toIso8601String(),
+      'repetitionlevel': repetitionLevel,
     };
   }
 
@@ -204,27 +202,25 @@ class OverallProgress extends Equatable {
       ? (totalCorrectAnswers / totalQuestionsAttempted) * 100
       : 0;
 
-  // Add fromJson factory constructor (optional - this is usually calculated)
   factory OverallProgress.fromJson(Map<String, dynamic> json) {
     return OverallProgress(
-      totalQuestionsAttempted: json['total_questions_attempted'] as int? ?? 0,
-      totalCorrectAnswers: json['total_correct_answers'] as int? ?? 0,
-      totalIncorrectAnswers: json['total_incorrect_answers'] as int? ?? 0,
-      currentStreak: json['current_streak'] as int? ?? 0,
-      longestStreak: json['longest_streak'] as int? ?? 0,
-      categoryPerformance: Map<String, int>.from(json['category_performance'] ?? {}),
+      totalQuestionsAttempted: json['totalQuestionsAttempted'] as int? ?? 0,
+      totalCorrectAnswers: json['totalCorrectAnswers'] as int? ?? 0,
+      totalIncorrectAnswers: json['totalIncorrectAnswers'] as int? ?? 0,
+      currentStreak: json['currentStreak'] as int? ?? 0,
+      longestStreak: json['longestStreak'] as int? ?? 0,
+      categoryPerformance: Map<String, int>.from(json['categoryPerformance'] ?? {}),
     );
   }
 
-  // Add toJson method
   Map<String, dynamic> toJson() {
     return {
-      'total_questions_attempted': totalQuestionsAttempted,
-      'total_correct_answers': totalCorrectAnswers,
-      'total_incorrect_answers': totalIncorrectAnswers,
-      'current_streak': currentStreak,
-      'longest_streak': longestStreak,
-      'category_performance': categoryPerformance,
+      'totalQuestionsAttempted': totalQuestionsAttempted,
+      'totalCorrectAnswers': totalCorrectAnswers,
+      'totalIncorrectAnswers': totalIncorrectAnswers,
+      'currentStreak': currentStreak,
+      'longestStreak': longestStreak,
+      'categoryPerformance': categoryPerformance,
     };
   }
 
