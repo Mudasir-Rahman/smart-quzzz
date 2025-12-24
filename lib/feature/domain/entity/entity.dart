@@ -1,3 +1,4 @@
+
 import 'package:equatable/equatable.dart';
 
 class MCQ extends Equatable {
@@ -20,6 +21,36 @@ class MCQ extends Equatable {
     this.difficultyLevel = 1,
     required this.createdAt,
   });
+
+  // Add fromJson factory constructor
+  factory MCQ.fromJson(Map<String, dynamic> json) {
+    return MCQ(
+      id: json['id']?.toString() ?? '',
+      question: json['question']?.toString() ?? '',
+      options: List<String>.from(json['options'] ?? []),
+      correctAnswerIndex: json['correct_answer_index'] as int? ?? 0,
+      explanation: json['explanation']?.toString(),
+      category: json['category']?.toString() ?? '',
+      difficultyLevel: json['difficulty_level'] as int? ?? 1,
+      createdAt: json['created_at'] != null
+          ? DateTime.parse(json['created_at'].toString())
+          : DateTime.now(),
+    );
+  }
+
+  // Add toJson method
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'question': question,
+      'options': options,
+      'correct_answer_index': correctAnswerIndex,
+      'explanation': explanation,
+      'category': category,
+      'difficulty_level': difficultyLevel,
+      'created_at': createdAt.toIso8601String(),
+    };
+  }
 
   @override
   List<Object?> get props => [
@@ -50,6 +81,32 @@ class UserAnswer extends Equatable {
     required this.answeredAt,
     this.timeSpentSeconds = 0,
   });
+
+  // Add fromJson factory constructor
+  factory UserAnswer.fromJson(Map<String, dynamic> json) {
+    return UserAnswer(
+      id: json['id']?.toString() ?? '',
+      mcqId: json['mcq_id']?.toString() ?? '',
+      selectedAnswerIndex: json['selected_answer_index'] as int? ?? 0,
+      isCorrect: json['is_correct'] as bool? ?? false,
+      answeredAt: json['answered_at'] != null
+          ? DateTime.parse(json['answered_at'].toString())
+          : DateTime.now(),
+      timeSpentSeconds: json['time_spent_seconds'] as int? ?? 0,
+    );
+  }
+
+  // Add toJson method
+  Map<String, dynamic> toJson() {
+    return {
+      'id': id,
+      'mcq_id': mcqId,
+      'selected_answer_index': selectedAnswerIndex,
+      'is_correct': isCorrect,
+      'answered_at': answeredAt.toIso8601String(),
+      'time_spent_seconds': timeSpentSeconds,
+    };
+  }
 
   @override
   List<Object?> get props => [
@@ -84,6 +141,36 @@ class QuestionProgress extends Equatable {
   double get accuracy =>
       timesAttempted > 0 ? (timesCorrect / timesAttempted) * 100 : 0;
 
+  // Add fromJson factory constructor
+  factory QuestionProgress.fromJson(Map<String, dynamic> json) {
+    return QuestionProgress(
+      mcqId: json['mcq_id']?.toString() ?? '',
+      timesAttempted: json['times_attempted'] as int? ?? 0,
+      timesCorrect: json['times_correct'] as int? ?? 0,
+      timesIncorrect: json['times_incorrect'] as int? ?? 0,
+      lastAttempted: json['last_attempted'] != null
+          ? DateTime.parse(json['last_attempted'].toString())
+          : DateTime.now(),
+      nextReviewDate: json['next_review_date'] != null
+          ? DateTime.parse(json['next_review_date'].toString())
+          : null,
+      repetitionLevel: json['repetition_level'] as int? ?? 0,
+    );
+  }
+
+  // Add toJson method
+  Map<String, dynamic> toJson() {
+    return {
+      'mcq_id': mcqId,
+      'times_attempted': timesAttempted,
+      'times_correct': timesCorrect,
+      'times_incorrect': timesIncorrect,
+      'last_attempted': lastAttempted.toIso8601String(),
+      'next_review_date': nextReviewDate?.toIso8601String(),
+      'repetition_level': repetitionLevel,
+    };
+  }
+
   @override
   List<Object?> get props => [
     mcqId,
@@ -116,6 +203,30 @@ class OverallProgress extends Equatable {
   double get overallAccuracy => totalQuestionsAttempted > 0
       ? (totalCorrectAnswers / totalQuestionsAttempted) * 100
       : 0;
+
+  // Add fromJson factory constructor (optional - this is usually calculated)
+  factory OverallProgress.fromJson(Map<String, dynamic> json) {
+    return OverallProgress(
+      totalQuestionsAttempted: json['total_questions_attempted'] as int? ?? 0,
+      totalCorrectAnswers: json['total_correct_answers'] as int? ?? 0,
+      totalIncorrectAnswers: json['total_incorrect_answers'] as int? ?? 0,
+      currentStreak: json['current_streak'] as int? ?? 0,
+      longestStreak: json['longest_streak'] as int? ?? 0,
+      categoryPerformance: Map<String, int>.from(json['category_performance'] ?? {}),
+    );
+  }
+
+  // Add toJson method
+  Map<String, dynamic> toJson() {
+    return {
+      'total_questions_attempted': totalQuestionsAttempted,
+      'total_correct_answers': totalCorrectAnswers,
+      'total_incorrect_answers': totalIncorrectAnswers,
+      'current_streak': currentStreak,
+      'longest_streak': longestStreak,
+      'category_performance': categoryPerformance,
+    };
+  }
 
   @override
   List<Object?> get props => [

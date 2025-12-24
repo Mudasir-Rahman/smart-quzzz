@@ -2,7 +2,6 @@
 
 import '../model/model.dart';
 
-/// Abstract class defining the contract for local data operations
 abstract class LocalDataSource {
   Future<List<MCQModel>> getAllMCQs();
   Future<MCQModel?> getMCQById(String id);
@@ -17,4 +16,12 @@ abstract class LocalDataSource {
   Future<QuestionProgressModel?> getQuestionProgress(String mcqId);
   Future<void> updateQuestionProgress(QuestionProgressModel progress);
   Future<List<QuestionProgressModel>> getAllQuestionProgress();
+
+  // Optional: Add these for better performance
+  Future<void> submitAnswerWithProgress({
+    required UserAnswerModel answer,
+    required bool isCorrect,
+  });
+
+  Future<List<MCQModel>> getQuestionsForReview();
 }

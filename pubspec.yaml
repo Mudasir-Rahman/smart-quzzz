@@ -41,8 +41,7 @@ dependencies:
   equatable: ^2.0.5
 
     # Local Database
-  sqflite: ^2.3.0
-  path: ^1.8.3
+  supabase_flutter: ^2.12.0
 
     # Dependency Injection
   get_it: ^7.6.4
