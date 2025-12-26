@@ -67,7 +67,7 @@ class LocalDataSourceImpl implements LocalDataSource {
         timesCorrect: 0,
         timesIncorrect: 0,
         lastAttempted: DateTime.now(),
-        repetitionLevel: 0,
+        repetitionLevel: 0, userId: '',
       );
 
       await client.from('question_progress').upsert(progress.toMap());
@@ -352,7 +352,7 @@ class LocalDataSourceImpl implements LocalDataSource {
       timesIncorrect: progress.timesIncorrect + (isCorrect ? 0 : 1),
       lastAttempted: DateTime.now(),
       nextReviewDate: nextReview,
-      repetitionLevel: newRepetitionLevel,
+      repetitionLevel: newRepetitionLevel, userId: '',
     );
   }
 }
