@@ -1,18 +1,13 @@
 import 'package:flutter/material.dart';
-import 'dart:async';
-import 'package:supabase_flutter/supabase_flutter.dart';
-import 'package:quiez_assigenment/feature/auth/domain/entity/auth_entity.dart';
-import 'package:quiez_assigenment/feature/auth/presentaion/screen/signin_screen.dart';
-import 'package:quiez_assigenment/feature/presentaion/screen/home_screen.dart';
 
-class SplashScreen extends StatefulWidget {
-  const SplashScreen({super.key});
+class LoadingScreen extends StatefulWidget {
+  const LoadingScreen({super.key});
 
   @override
-  State<SplashScreen> createState() => _SplashScreenState();
+  State<LoadingScreen> createState() => _LoadingScreenState();
 }
 
-class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderStateMixin {
+class _LoadingScreenState extends State<LoadingScreen> with SingleTickerProviderStateMixin {
   late AnimationController _animationController;
   late Animation<double> _fadeAnimation;
   late Animation<double> _scaleAnimation;
@@ -41,38 +36,6 @@ class _SplashScreenState extends State<SplashScreen> with SingleTickerProviderSt
     );
 
     _animationController.forward();
-
-    _navigateNext();
-  }
-
-  void _navigateNext() async {
-    await Future.delayed(const Duration(seconds: 3));
-
-    if (!mounted) return;
-
-    final user = Supabase.instance.client.auth.currentUser;
-
-    if (user != null) {
-      // Create a UserEntity from the Supabase user
-      final userEntity = UserEntity(
-        id: user.id,
-        email: user.email ?? '',
-        fullName: user.userMetadata?['full_name'] ?? 'User',
-        createdAt: DateTime.parse(user.createdAt),
-      );
-
-      // Navigate to HomeScreen with the user data
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => HomeScreen(user: userEntity)),
-      );
-    } else {
-      // User not logged in → go to SignIn screen
-      Navigator.pushReplacement(
-        context,
-        MaterialPageRoute(builder: (_) => const SigninUi()),
-      );
-    }
   }
 
   @override

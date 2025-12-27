@@ -36,3 +36,4 @@ class SignOutEvent extends AuthEvent {}
 
 /// ---------------- CHECK AUTH STATUS ----------------
 class CheckAuthStatusEvent extends AuthEvent {}
+class ResetAuthProcessingEvent extends AuthEvent {}

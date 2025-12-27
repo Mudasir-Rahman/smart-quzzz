@@ -1,223 +1,3 @@
-// import 'package:flutter/material.dart';
-// import 'package:flutter_bloc/flutter_bloc.dart';
-// import 'package:quiez_assigenment/feature/auth/presentaion/bloc/auth_bloc.dart';
-// import 'package:quiez_assigenment/feature/auth/presentaion/bloc/auth_event.dart';
-// import 'package:quiez_assigenment/feature/auth/presentaion/bloc/auth_state.dart';
-// import 'package:quiez_assigenment/feature/auth/presentaion/screen/signin_screen.dart';
-//
-// class SignupUi extends StatefulWidget {
-//   const SignupUi({super.key});
-//
-//   @override
-//   State<SignupUi> createState() => _SignupUiState();
-// }
-//
-// class _SignupUiState extends State<SignupUi> {
-//   final _formKey = GlobalKey<FormState>();
-//   final nameController = TextEditingController();
-//   final emailController = TextEditingController();
-//   final passwordController = TextEditingController();
-//   bool _isLoading = false;
-//
-//   void _signup() {
-//     if (!_formKey.currentState!.validate()) return;
-//
-//     setState(() => _isLoading = true);
-//
-//     print('🔄 SignupUi: Starting signup process...');
-//
-//     context.read<AuthBloc>().add(
-//       SignupEvent(
-//         email: emailController.text,
-//         password: passwordController.text,
-//         fullName: nameController.text,
-//       ),
-//     );
-//   }
-//
-//   @override
-//   Widget build(BuildContext context) {
-//     return BlocListener<AuthBloc, AuthBlocState>(
-//       listener: (context, state) {
-//         print('🔄 SignupUi listener - State: ${state.runtimeType}');
-//
-//         if (state is AuthSuccess) {
-//           setState(() => _isLoading = false);
-//           print('✅ SignupUi: Signup successful! User: ${state.user.email}');
-//
-//           // Show success message
-//           ScaffoldMessenger.of(context).showSnackBar(
-//             SnackBar(
-//               content: Text('Welcome ${state.user.fullName}!'),
-//               backgroundColor: Colors.green,
-//               duration: Duration(seconds: 2),
-//             ),
-//           );
-//
-//           // The AuthWrapper will automatically navigate to HomeScreen
-//           // because AuthSuccess state is emitted
-//
-//         } else if (state is AuthFailure) {
-//           setState(() => _isLoading = false);
-//           print('❌ SignupUi: Signup failed - ${state.message}');
-//
-//           ScaffoldMessenger.of(context).showSnackBar(
-//             SnackBar(
-//               content: Text(state.message),
-//               backgroundColor: Colors.red,
-//             ),
-//           );
-//
-//         } else if (state is AuthLoading) {
-//           setState(() => _isLoading = true);
-//           print('⏳ SignupUi: Loading...');
-//         }
-//       },
-//       child: Scaffold(
-//         appBar: AppBar(
-//           title: const Text('Sign Up'),
-//           leading: IconButton(
-//             icon: const Icon(Icons.arrow_back),
-//             onPressed: () => Navigator.pushReplacement(
-//               context,
-//               MaterialPageRoute(builder: (_) => const SigninUi()),
-//             ),
-//           ),
-//         ),
-//         body: SafeArea(
-//           child: Center(
-//             child: SingleChildScrollView(
-//               padding: const EdgeInsets.all(24),
-//               child: Form(
-//                 key: _formKey,
-//                 child: Column(
-//                   mainAxisSize: MainAxisSize.min,
-//                   children: [
-//                     const SizedBox(height: 20),
-//                     const Icon(
-//                       Icons.person_add,
-//                       size: 80,
-//                       color: Colors.deepPurple,
-//                     ),
-//                     const SizedBox(height: 20),
-//                     const Text(
-//                       "Create Account",
-//                       style: TextStyle(
-//                         fontSize: 28,
-//                         fontWeight: FontWeight.bold,
-//                         color: Colors.deepPurple,
-//                       ),
-//                     ),
-//                     const SizedBox(height: 8),
-//                     const Text(
-//                       "Fill in your details to get started",
-//                       style: TextStyle(
-//                         fontSize: 16,
-//                         color: Colors.grey,
-//                       ),
-//                     ),
-//                     const SizedBox(height: 32),
-//                     TextFormField(
-//                       controller: nameController,
-//                       decoration: const InputDecoration(
-//                         labelText: "Full Name",
-//                         prefixIcon: Icon(Icons.person),
-//                         border: OutlineInputBorder(
-//                           borderRadius: BorderRadius.all(Radius.circular(10)),
-//                         ),
-//                       ),
-//                       validator: (v) => v!.isEmpty ? "Enter your name" : null,
-//                     ),
-//                     const SizedBox(height: 16),
-//                     TextFormField(
-//                       controller: emailController,
-//                       keyboardType: TextInputType.emailAddress,
-//                       decoration: const InputDecoration(
-//                         labelText: "Email",
-//                         prefixIcon: Icon(Icons.email),
-//                         border: OutlineInputBorder(
-//                           borderRadius: BorderRadius.all(Radius.circular(10)),
-//                         ),
-//                       ),
-//                       validator: (v) => v!.contains('@') ? null : "Enter valid email",
-//                     ),
-//                     const SizedBox(height: 16),
-//                     TextFormField(
-//                       controller: passwordController,
-//                       obscureText: true,
-//                       decoration: const InputDecoration(
-//                         labelText: "Password",
-//                         prefixIcon: Icon(Icons.lock),
-//                         border: OutlineInputBorder(
-//                           borderRadius: BorderRadius.all(Radius.circular(10)),
-//                         ),
-//                       ),
-//                       validator: (v) => v!.length >= 6 ? null : "Password must be 6+ characters",
-//                     ),
-//                     const SizedBox(height: 32),
-//                     SizedBox(
-//                       width: double.infinity,
-//                       height: 50,
-//                       child: ElevatedButton(
-//                         onPressed: _isLoading ? null : _signup,
-//                         style: ElevatedButton.styleFrom(
-//                           backgroundColor: Colors.deepPurple,
-//                           shape: RoundedRectangleBorder(
-//                             borderRadius: BorderRadius.circular(10),
-//                           ),
-//                           elevation: 5,
-//                         ),
-//                         child: _isLoading
-//                             ? const SizedBox(
-//                           height: 20,
-//                           width: 20,
-//                           child: CircularProgressIndicator(
-//                             color: Colors.white,
-//                             strokeWidth: 2,
-//                           ),
-//                         )
-//                             : const Text(
-//                           "SIGN UP",
-//                           style: TextStyle(
-//                             fontSize: 16,
-//                             fontWeight: FontWeight.bold,
-//                           ),
-//                         ),
-//                       ),
-//                     ),
-//                     const SizedBox(height: 24),
-//                     Row(
-//                       mainAxisAlignment: MainAxisAlignment.center,
-//                       children: [
-//                         const Text(
-//                           "Already have an account?",
-//                           style: TextStyle(color: Colors.grey),
-//                         ),
-//                         TextButton(
-//                           onPressed: () => Navigator.pushReplacement(
-//                             context,
-//                             MaterialPageRoute(builder: (_) => const SigninUi()),
-//                           ),
-//                           child: const Text(
-//                             "Sign In",
-//                             style: TextStyle(
-//                               color: Colors.deepPurple,
-//                               fontWeight: FontWeight.bold,
-//                             ),
-//                           ),
-//                         ),
-//                       ],
-//                     ),
-//                   ],
-//                 ),
-//               ),
-//             ),
-//           ),
-//         ),
-//       ),
-//     );
-//   }
-// }
 import 'package:flutter/material.dart';
 import 'package:flutter_bloc/flutter_bloc.dart';
 import 'package:quiez_assigenment/feature/auth/presentaion/bloc/auth_bloc.dart';
@@ -253,7 +33,7 @@ class _SignupUiState extends State<SignupUi> {
 
     setState(() => _isLoading = true);
 
-    print('🔄 SignupUi: Starting signup process...');
+    // print('🔄 SignupUi: Starting signup process...');
 
     context.read<AuthBloc>().add(
       SignupEvent(
@@ -268,35 +48,35 @@ class _SignupUiState extends State<SignupUi> {
   Widget build(BuildContext context) {
     return BlocListener<AuthBloc, AuthBlocState>(
       listener: (context, state) {
-        print('🔄 SignupUi listener - State: ${state.runtimeType}');
+        // print('🔄 SignupUi listener - State: ${state.runtimeType}');
 
         if (state is AuthSuccess) {
           setState(() => _isLoading = false);
-          print('✅ SignupUi: Signup successful! User: ${state.user.email}');
+          // print('✅ SignupUi: Signup successful! User: ${state.user.email}');
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text('Welcome ${state.user.fullName}! Account created successfully.'),
               backgroundColor: Colors.green,
-              duration: Duration(seconds: 3),
+              duration: const Duration(seconds: 3),
             ),
           );
 
-        } else if (state is AuthFailure) {
+        } else if (state is AuthError) {
           setState(() => _isLoading = false);
-          print('❌ SignupUi: Signup failed - ${state.message}');
+          // print('❌ SignupUi: Signup failed - ${state.message}');
 
           ScaffoldMessenger.of(context).showSnackBar(
             SnackBar(
               content: Text(state.message),
               backgroundColor: Colors.red,
-              duration: Duration(seconds: 4),
+              duration: const Duration(seconds: 4),
             ),
           );
 
         } else if (state is AuthLoading) {
           setState(() => _isLoading = true);
-          print('⏳ SignupUi: Loading...');
+          // print('⏳ SignupUi: Loading...');
         }
       },
       child: Scaffold(
@@ -322,12 +102,12 @@ class _SignupUiState extends State<SignupUi> {
                     alignment: Alignment.topLeft,
                     child: IconButton(
                       icon: Container(
-                        padding: EdgeInsets.all(8),
+                        padding: const EdgeInsets.all(8),
                         decoration: BoxDecoration(
                           color: Colors.white.withOpacity(0.2),
                           shape: BoxShape.circle,
                         ),
-                        child: Icon(
+                        child: const Icon(
                           Icons.arrow_back,
                           color: Colors.white,
                           size: 24,
@@ -348,7 +128,7 @@ class _SignupUiState extends State<SignupUi> {
                       color: Colors.white.withOpacity(0.1),
                       shape: BoxShape.circle,
                     ),
-                    child: Icon(
+                    child: const Icon(
                       Icons.person_add,
                       size: 80,
                       color: Colors.white,
@@ -392,7 +172,7 @@ class _SignupUiState extends State<SignupUi> {
                         BoxShadow(
                           color: Colors.black.withOpacity(0.1),
                           blurRadius: 20,
-                          offset: Offset(0, 10),
+                          offset: const Offset(0, 10),
                         ),
                       ],
                     ),
@@ -569,7 +349,7 @@ class _SignupUiState extends State<SignupUi> {
                                 color: Colors.deepPurple.shade600,
                                 size: 18,
                               ),
-                              SizedBox(width: 8),
+                              const SizedBox(width: 8),
                               Expanded(
                                 child: Text(
                                   'By signing up, you agree to our Terms & Conditions',
@@ -607,7 +387,7 @@ class _SignupUiState extends State<SignupUi> {
                                   strokeWidth: 3,
                                 ),
                               )
-                                  : Row(
+                                  : const Row(
                                 mainAxisAlignment: MainAxisAlignment.center,
                                 children: [
                                   Text(
@@ -645,7 +425,7 @@ class _SignupUiState extends State<SignupUi> {
                           context,
                           MaterialPageRoute(builder: (_) => const SigninUi()),
                         ),
-                        child: Text(
+                        child: const Text(
                           "Sign In",
                           style: TextStyle(
                             color: Colors.white,
